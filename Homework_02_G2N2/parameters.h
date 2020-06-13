@@ -1,0 +1,70 @@
+//---------------- PARAMETERS.H ----------------------- 
+
+#define TICK_TIME 100000000
+#define CNTRL_TIME 50000000
+
+#define TASK_PRIORITY 1
+
+#define STACK_SIZE 10000
+
+#define BUF_SIZE 10
+
+#define SEN_SHM 121111			//ID SHARED MEMORY "SENSOR"
+#define ACT_SHM 112112			//ID SHARED MEMORY "ACTUATOR"
+#define REFSENS 111213			//ID SHARED MEMORY "REFERENCE"
+#define INF_SHM 156789			//ID SHARED MEMORY "INFO" 
+#define SHM_CON 897654			//ID SHARED MEMORY USED FOR THE COMUNICATION BETWEEN CONTROLLERS OF DIFFERENT WHEELS
+#define SHM_STOP 887653			//ID SHARED MEMORY USED TO SIGNAL THE SUDDEN STOP 
+
+#define SPACE_SEM "space_sem"		//SEMAPHORE USED FOR SYNCRONYZATION BETWEEN THE ACQUIRE TASK AND THE FILTER TASK
+#define MEAS_SEM "meas_sem"		
+#define MUTEX_CONT "mutxcontr"
+#define MUTEX_INFO "mutxinfo"		
+
+#define MBX_ACQ_DIAG_SS "mbxacqdiagSS"		//MAILBOX USED FOR THE COMUNICATION BETWEEN THE ACQUIRE TASKS AND THE SPORADIC SERVER 
+#define MBX_CONTR_AB "mbxconAB"			//MAILBOX USED FOR THE COMUNICATION BETWEEN THE CONTROL TASKS AND THE AIRBAG TASK 
+#define MBX_SS_DIAG "mbxssdiag" 		//MAILBOX USED FOR THE COMUNICATION BETWEEN THE DIAGNOSTIC TASK AND THE SPORADIC SERVER
+
+
+
+#define NUM_OF_WHEELS 4
+#define AIRBAG_MESSAGE 1		
+#define DIAG_MESSAGE 2
+
+
+typedef struct {
+
+	RTIME wcet_acquire;
+	RTIME wcet_filter;	
+	RTIME wcet_controller;
+	RTIME wcet_actuator;
+	int acquire;
+	int filter;	
+	int controller;
+	int actuator;
+
+}info_tasks_wheel;
+
+
+typedef struct {
+
+	RTIME RT;
+	RTIME RA;
+
+}ss_replenishment;
+
+
+
+//STRUCT OF THE MESSAGE SENT FROM THE SPORADIC SERVER TO THE DIAGNOSTIC TASK AND VICEVERSA 
+typedef struct{
+	
+	int num_el;			//INDICATES THE NUMBER OF REPLENISHMENT TIMES STORED INTO THE ARRAY OF THE SPORADIC SERVER
+	RTIME response ;		//IF 0, THE REQUEST IS SERVED, OTHERWISE THIS VALUE INDICATES THE NEXT REPLENISHMENT TIME 
+	RTIME remaining_capacity;	
+	info_tasks_wheel info_wheels[NUM_OF_WHEELS];	
+	ss_replenishment info_ss[5];		
+	
+}diag_info;
+
+
+
